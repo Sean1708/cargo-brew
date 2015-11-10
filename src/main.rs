@@ -38,7 +38,7 @@ fn main() {
     // Install crate into temporary directory so that it can be moved to the Cellar later.
     // Inherits stdout and stderr.
     let install = process::Command::new("cargo").arg("install").args(&args)
-        .stdout(process::Stdio::inherit()).stderr(process::Stdio::inherit())
+        .stdout(process::Stdio::inherit())
         .output();
     try_process!(install, "cargo install");
 
@@ -85,8 +85,8 @@ fn set_root(old_args: env::Args, temp_dir: &str) -> Vec<String> {
     let mut new_args = vec![];
 
     let mut skip = false;
-    // Skip executable name with skip(1).
-    for arg in old_args.skip(1) {
+    // Skip executable name and command name with skip(2).
+    for arg in old_args.skip(2) {
         // Previous arg was `--root` so this arg is `/path/to/root` and shouldn't be pushed.
         if skip {
             skip = false;
