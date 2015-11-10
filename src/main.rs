@@ -39,7 +39,7 @@ fn main() {
     let temp_dir = format!("cargo-brew-{}", rand::random::<u32>());
     let temp_dir = env::temp_dir().join(temp_dir);
     fs::create_dir(&temp_dir).expect(msg_file_line!("could not create temporary directory"));
-    let args = set_root(env::args(), temp_dir.to_str().expect("non-unincode temporary directory"));
+    let args = set_root(env::args(), temp_dir.to_str().expect(msg_file_line!("non-unincode temporary directory")));
 
     // Install crate into temporary directory so that it can be moved to the Cellar later.
     // Inherits stdout so user doesn't have to wait staring at a blank screen.
@@ -125,7 +125,7 @@ fn set_root(old_args: env::Args, temp_dir: &str) -> Vec<String> {
 
 fn parse_krate_vers_from_error(err: &str) -> (String, String) {
     // Find the `$KRATE v$VERS part of the error message.
-    let re = regex::Regex::new(r"`(\S+) v([0-9.]+)").expect("statically known regex is invalid");
+    let re = regex::Regex::new(r"`(\S+) v([0-9.]+)").expect(msg_file_line!("statically known regex is invalid"));
     let krate_vers = if let Some(caps) = re.captures(err) {
         let krate = caps.at(1).expect(msg_file_line!("could not determine crate name")).to_owned();
         let vers = caps.at(2).unwrap_or("HEAD").to_owned();
