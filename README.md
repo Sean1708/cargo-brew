@@ -6,12 +6,12 @@ Easily integrate `cargo install` installed binaries into Homebrew!
 
 Unfortunately you'll have to use `cargo install` just this once:
 
-    $ cargo install --git https://github.com/Sean1708/cargo-brew --root $(brew --cellar)/cargo-brew/0.1.0
+    $ cargo install --git https://github.com/Sean1708/cargo-brew --root $(brew --cellar)/cargo-brew/0.1.1
     $ brew link cargo-brew
 
 Alternatively, in a one-liner:
 
-    $ cargo install --git https://github.com/Sean1708/cargo-brew --root $(brew --cellar)/cargo-brew/0.1.0 && brew link cargo-brew
+    $ cargo install --git https://github.com/Sean1708/cargo-brew --root $(brew --cellar)/cargo-brew/0.1.1 && brew link cargo-brew
 
 ## Usage
 
