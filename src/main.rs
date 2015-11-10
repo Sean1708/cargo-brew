@@ -28,6 +28,9 @@ fn main() {
     // This is hardly going to be a bottleneck but it's not needed until later so we can happily
     // let it chug along in the background.
     let cellar = process::Command::new("brew").arg("--cellar")
+        .stdin(process::Stdio::null())
+        .stdout(process::Stdio::piped())
+        .stderr(process::Stdio::piped())
         .spawn()
         .expect(msg_file_line!("could not run `brew install`"));
 
