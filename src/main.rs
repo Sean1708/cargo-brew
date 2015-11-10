@@ -6,8 +6,6 @@ use std::fs;
 use std::path;
 use std::process;
 
-// TODO: cargo-unbrew.
-//     - just needs to wrap `brew uninstall`
 macro_rules! try_process {
     ($output:expr, $command:expr) => (match $output {
         Ok(ref o) => if o.status.success() {
@@ -34,7 +32,6 @@ fn main() {
     let args = set_root(env::args(), temp_dir.to_str().expect("non-unincode temporary directory"));
 
     // TODO: we can run this and `brew --cellar` in parallel.
-    // TODO: pipe this stdout to stdout.
     // Install crate into temporary directory so that it can be moved to the Cellar later.
     // Inherits stdout and stderr.
     let install = process::Command::new("cargo").arg("install").args(&args)
