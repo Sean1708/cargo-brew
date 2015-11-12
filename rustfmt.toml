@@ -1,0 +1,4 @@
+fn_args_layout = Block
+chain_base_indent = Inherit
+reorder_imports = true
+single_line_if_else = true
