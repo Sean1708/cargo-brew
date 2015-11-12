@@ -25,7 +25,7 @@ just don't bother.
 
 Installing a program is as simple as
 
-    cargo brew --git https://github.com/nrc/rustfmt
+    cargo brew --git https://github.com/rust-lang-nursery/rustfmt
 
 and uninstalling as simple as
 
