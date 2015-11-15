@@ -29,6 +29,7 @@ and uninstalling as simple as:
 
 ## Upgrading
 
-To upgrade cargo-brew, simply `cargo brew` cargo-brew and cargo-brew will be `cargo brew`ed into the latest verion number:
+To upgrade cargo-brew, simply `cargo brew` cargo-brew and cargo-brew will be `cargo brew`ed into the
+latest version number:
 
     $ cargo brew cargo-brew
