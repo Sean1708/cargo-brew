@@ -19,13 +19,13 @@ In theory cargo-brew should remove any `--root` options that you pass but in pra
 been thoroughly tested. At best it'll have no effect but at worst you'll royally screw things up, so
 just don't bother.
 
-Installing a program is as simple as
+Installing a program is as simple as:
 
-    cargo brew --git https://github.com/rust-lang-nursery/rustfmt
+    $ cargo brew --git https://github.com/rust-lang-nursery/rustfmt
 
-and uninstalling as simple as
+and uninstalling as simple as:
 
-    brew uninstall rustfmt
+    $ brew uninstall rustfmt
 
 ## Upgrading
 
