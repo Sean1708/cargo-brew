@@ -26,3 +26,9 @@ Installing a program is as simple as
 and uninstalling as simple as
 
     brew uninstall rustfmt
+
+## Upgrading
+
+To upgrade cargo-brew, simply `cargo brew` cargo-brew and cargo-brew will be `cargo brew`ed into the latest verion number:
+
+    $ cargo brew --git https://github.com/Sean1708/cargo-brew
