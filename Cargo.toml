@@ -4,6 +4,7 @@ version = "0.1.1"
 authors = ["Sean Marshallsay <srm.1708@gmail.com>"]
 
 description = "A cargo install wrapper to automatically install binaries into Homebrew."
+keywords = ["cargo", "install", "homebrew", "brew"]
 readme = "README.md"
 
 homepage = "https://github.com/Sean1708/cargo-brew"
