@@ -9,10 +9,6 @@ Unfortunately you'll have to use `cargo install` just this once:
     $ cargo install --git https://github.com/Sean1708/cargo-brew --root $(brew --cellar)/cargo-brew/0.1.1
     $ brew link cargo-brew
 
-Alternatively, in a one-liner:
-
-    $ cargo install --git https://github.com/Sean1708/cargo-brew --root $(brew --cellar)/cargo-brew/0.1.1 && brew link cargo-brew
-
 ## Usage
 
 cargo-brew currently passes all arguments straight through to `cargo install` and therefore supports
