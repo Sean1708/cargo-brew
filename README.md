@@ -6,7 +6,7 @@ Easily integrate `cargo install` installed binaries into Homebrew!
 
 Unfortunately you'll have to use `cargo install` just this once:
 
-    $ cargo install --git https://github.com/Sean1708/cargo-brew --root $(brew --cellar)/cargo-brew/0.1.1
+    $ cargo install cargo-brew --root $(brew --cellar)/cargo-brew/0.1.2
     $ brew link cargo-brew
 
 ## Usage
@@ -31,4 +31,4 @@ and uninstalling as simple as:
 
 To upgrade cargo-brew, simply `cargo brew` cargo-brew and cargo-brew will be `cargo brew`ed into the latest verion number:
 
-    $ cargo brew --git https://github.com/Sean1708/cargo-brew
+    $ cargo brew cargo-brew
