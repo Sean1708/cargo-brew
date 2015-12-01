@@ -38,10 +38,10 @@ fn main() {
     // Randomly generated suffix is easier than the possibility of cleanup failing.
     let temp_dir = format!("cargo-brew-{}", rand::random::<u32>());
     let temp_dir = env::temp_dir().join(temp_dir);
-    fs::create_dir(&temp_dir).expect(flm!("could not create temporary directory"));
+    expect!(fs::create_dir(&temp_dir), "could not create temporary directory");
     let args = set_root(
         env::args(),
-        temp_dir.to_str().expect(flm!("non-unincode temporary directory"))
+        expect!(temp_dir.to_str(), "non-unincode temporary directory")
     );
 
     // Install crate into temporary directory so that it can be moved to the Cellar later.
@@ -77,7 +77,7 @@ fn main() {
     let cellar = try_process!(cellar, "brew --cellar");
     let cellar = path::Path::new(cellar.trim());
     let brew_root = cellar.join(&krate).join(vers).join("bin");
-    fs::create_dir_all(&brew_root).expect(flm!("could not create directories in Cellar"));
+    expect!(fs::create_dir_all(&brew_root), "could not create directories in Cellar");
 
     // Loop through "temp_dir/bin" and copy the files into "brew_root/bin".
     let temp_dir = temp_dir.join("bin");
@@ -130,9 +130,9 @@ fn set_root(old_args: env::Args, temp_dir: &str) -> Vec<String> {
 
 fn parse_krate_vers_from_error(err: &str) -> (String, String) {
     // Find the `$KRATE v$VERS part of the error message.
-    let re = regex::Regex::new(r"`(\S+) v([0-9.]+)").expect(flm!("statically known regex is invalid"));
+    let re = expect!(regex::Regex::new(r"`(\S+) v([0-9.]+)"), "statically known regex is invalid");
     let krate_vers = if let Some(caps) = re.captures(err) {
-        let krate = caps.at(1).expect(flm!("could not determine crate name")).to_owned();
+        let krate = expect!(caps.at(1), "could not determine crate name").to_owned();
         let vers = caps.at(2).unwrap_or("HEAD").to_owned();
         (krate, vers)
     } else {
