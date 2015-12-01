@@ -1,3 +1,4 @@
+#[macro_use] extern crate userror;
 extern crate rand;
 extern crate regex;
 
@@ -6,22 +7,17 @@ use std::fs;
 use std::path;
 use std::process;
 
-use std::error::Error;
-
 macro_rules! try_process {
     ($output:expr, $command:expr) => (match $output {
         Ok(ref o) => if o.status.success() {
             String::from_utf8_lossy(&o.stdout)
         } else {
-            println!("`{}` failed: {}", $command, String::from_utf8_lossy(&o.stderr).trim());
+            userror::error(&format!("`{}` failed: {}", $command, String::from_utf8_lossy(&o.stderr).trim()))
+                .expect("failed to write error message");
             process::exit(o.status.code().unwrap_or(1));
         },
-        Err(e) => panic!("`{}` could not be run: {}", $command, e.description()),
+        Err(error) => userror::fatal(&format!("`{}` could not be run: {}", $command, error)),
     });
-}
-
-macro_rules! msg_file_line {
-    ($msg:expr) => (concat!($msg, ":", file!(), ":", line!()));
 }
 
 fn main() {
@@ -31,17 +27,21 @@ fn main() {
         .stdin(process::Stdio::null())
         .stdout(process::Stdio::piped())
         .stderr(process::Stdio::piped())
-        .spawn()
-        .expect(msg_file_line!("could not run `brew install`"));
+        .spawn();
+
+    let cellar = match cellar {
+        Ok(thread) => thread,
+        Err(error) => userror::fatal(&format!("could not run `brew --cellar`: {}", error)),
+    };
 
     // Create a temporary directory to do the initial install into.
     // Randomly generated suffix is easier than the possibility of cleanup failing.
     let temp_dir = format!("cargo-brew-{}", rand::random::<u32>());
     let temp_dir = env::temp_dir().join(temp_dir);
-    fs::create_dir(&temp_dir).expect(msg_file_line!("could not create temporary directory"));
+    fs::create_dir(&temp_dir).expect(flm!("could not create temporary directory"));
     let args = set_root(
         env::args(),
-        temp_dir.to_str().expect(msg_file_line!("non-unincode temporary directory"))
+        temp_dir.to_str().expect(flm!("non-unincode temporary directory"))
     );
 
     // Install crate into temporary directory so that it can be moved to the Cellar later.
@@ -67,9 +67,9 @@ fn main() {
         Ok(ref o) => if !o.status.success() {
             parse_krate_vers_from_error(&String::from_utf8_lossy(&o.stderr))
         } else {
-            panic!("second `cargo install` succeeded");
+            userror::fatal("second `cargo install` succeeded");
         },
-        Err(e) => panic!("`cargo install` could not be run: {}", e.description()),
+        Err(e) => userror::fatal(&format!("`cargo install` could not be run: {}", e)),
     };
 
     // Find user's Homebrew Cellar and create the directory structure.
@@ -77,7 +77,7 @@ fn main() {
     let cellar = try_process!(cellar, "brew --cellar");
     let cellar = path::Path::new(cellar.trim());
     let brew_root = cellar.join(&krate).join(vers).join("bin");
-    fs::create_dir_all(&brew_root).expect(msg_file_line!("could not create directories in Cellar"));
+    fs::create_dir_all(&brew_root).expect(flm!("could not create directories in Cellar"));
 
     // Loop through "temp_dir/bin" and copy the files into "brew_root/bin".
     let temp_dir = temp_dir.join("bin");
@@ -85,19 +85,21 @@ fn main() {
         Ok(dir) => for file in dir {
             let file = match file {
                 Ok(file) => file,
-                Err(e) => {
-                    println!("Warning: could not read directory entry: {}", e.description());
+                Err(error) => {
+                    userror::warn(&format!("could not read directory entry: {}", error))
+                        .expect("failed to write error message");
                     continue
                 },
             };
             let name = file.file_name();
             let old_path = file.path();
             let new_path = brew_root.join(name);
-            if let Err(e) = fs::rename(&old_path, &new_path) {
-                println!("Warning: could not move binary '{:?}' to '{:?}': {}", old_path, new_path, e.description());
+            if let Err(error) = fs::rename(&old_path, &new_path) {
+                userror::warn(&format!("could not move binary '{:?}' to '{:?}': {}", old_path, new_path, error))
+                    .expect("failed to write error message");
             };
         },
-        Err(_) => panic!("unable to open '{:?}'", temp_dir),
+        Err(error) => userror::fatal(&format!("could not open '{:?}': {}", temp_dir, error)),
     };
 
     let brew_link = process::Command::new("brew").arg("link").arg(&krate).output();
@@ -128,13 +130,13 @@ fn set_root(old_args: env::Args, temp_dir: &str) -> Vec<String> {
 
 fn parse_krate_vers_from_error(err: &str) -> (String, String) {
     // Find the `$KRATE v$VERS part of the error message.
-    let re = regex::Regex::new(r"`(\S+) v([0-9.]+)").expect(msg_file_line!("statically known regex is invalid"));
+    let re = regex::Regex::new(r"`(\S+) v([0-9.]+)").expect(flm!("statically known regex is invalid"));
     let krate_vers = if let Some(caps) = re.captures(err) {
-        let krate = caps.at(1).expect(msg_file_line!("could not determine crate name")).to_owned();
+        let krate = caps.at(1).expect(flm!("could not determine crate name")).to_owned();
         let vers = caps.at(2).unwrap_or("HEAD").to_owned();
         (krate, vers)
     } else {
-        panic!("could not determine crate name");
+        userror::fatal("could not determine crate name");
     };
 
     krate_vers

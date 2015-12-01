@@ -15,3 +15,5 @@ license = "MIT"
 [dependencies]
 rand = "0.3"
 regex = "0.1"
+
+userror = { git = "https://github.com/Sean1708/userror-rs" }
