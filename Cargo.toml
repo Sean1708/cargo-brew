@@ -1,6 +1,6 @@
 [package]
 name = "cargo-brew"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Sean Marshallsay <srm.1708@gmail.com>"]
 
 description = "A cargo install wrapper to automatically install binaries into Homebrew."
