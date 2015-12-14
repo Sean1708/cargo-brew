@@ -70,7 +70,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "userror"
 version = "0.1.0"
-source = "git+https://github.com/Sean1708/userror-rs#c6de415003631db61f52f9c1a248d779b6b97e31"
+source = "git+https://github.com/Sean1708/userror-rs#df5554b01f69950c198772fbb2b74224878860a6"
 dependencies = [
  "ansi_term 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
