@@ -76,7 +76,7 @@ fn main() {
     let cellar = cellar.wait_with_output();
     let cellar = try_process!(cellar, "brew --cellar");
     let cellar = path::Path::new(cellar.trim());
-    let brew_root = cellar.join(&krate).join(vers).join("bin");
+    let brew_root = cellar.join(&krate).join(&vers).join("bin");
     expect!(fs::create_dir_all(&brew_root), "could not create directories in Cellar");
 
     // Loop through "temp_dir/bin" and copy the files into "brew_root/bin".
@@ -102,21 +102,8 @@ fn main() {
         Err(error) => userror::fatal(&format!("could not open '{:?}': {}", temp_dir, error)),
     };
 
-    // kegs need to be unlinked before they can be linked again
-    let brew_unlink = process::Command::new("brew").arg("unlink").arg(&krate).output();
-    // unfortunately unlink will fail if the keg doesn't exist which it will be first time it is run
-    match brew_unlink {
-        Ok(output) => if !output.status.success() {
-            userror::warn(&format!("keg {} could not be unlinked", krate))
-                .expect("failed to write error message");
-            userror::info("this should only happen the first time you install a crate")
-                .expect("failed to write error message");
-        },
-        Err(error) => userror::fatal(&format!("`brew unlink {}` could not be run: {}", krate, error)),
-    }
-
-    let brew_link = process::Command::new("brew").arg("link").arg(&krate).output();
-    try_process!(brew_link, format!("brew link {}", krate));
+    let brew_switch = process::Command::new("brew").arg("switch").arg(&krate).arg(&vers).output();
+    try_process!(brew_switch, format!("brew switch {} {}", krate, vers));
 }
 
 fn set_root(old_args: env::Args, temp_dir: &str) -> Vec<String> {
