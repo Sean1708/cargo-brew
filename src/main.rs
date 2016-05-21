@@ -102,6 +102,19 @@ fn main() {
         Err(error) => userror::fatal(&format!("could not open '{:?}': {}", temp_dir, error)),
     };
 
+    // kegs need to be unlinked before they can be linked again
+    let brew_unlink = process::Command::new("brew").arg("unlink").arg(&krate).output();
+    // unfortunately unlink will fail if the keg doesn't exist which it will be first time it is run
+    match brew_unlink {
+        Ok(output) => if !output.status.success() {
+            userror::warn(&format!("keg {} could not be unlinked", krate))
+                .expect("failed to write error message");
+            userror::info("this should only happen the first time you install a crate")
+                .expect("failed to write error message");
+        },
+        Err(error) => userror::fatal(&format!("`brew unlink {}` could not be run: {}", krate, error)),
+    }
+
     let brew_link = process::Command::new("brew").arg("link").arg(&krate).output();
     try_process!(brew_link, format!("brew link {}", krate));
 }
