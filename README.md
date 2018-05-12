@@ -1,3 +1,5 @@
+**All new development on cargo-brew is being done by Kornelski at https://github.com/kornelski/cargo-brew.**
+
 # cargo-brew
 
 Easily integrate `cargo install` installed binaries into Homebrew!
